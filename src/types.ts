@@ -10,4 +10,19 @@ export interface TelegramWebApp {
   initDataUnsafe?: {
     user?: TelegramWebAppUser;
   };
+  expand: () => void;
+  ready: () => void;
+}
+
+export type Item = {
+  id: number;
+  title: string;
+  amount?: number;
+  unit?: string;
+}
+
+export type Category = {
+  id: number;
+  title: string;
+  items: Item[];
 }
