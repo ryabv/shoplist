@@ -3,7 +3,6 @@
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
-  text-align: center;
 }
 
 .title {
@@ -11,7 +10,7 @@
   font-weight: bold;
   margin-bottom: 20px;
 }
-
+/* 
 .form {
   display: flex;
   flex-direction: column;
@@ -78,4 +77,4 @@
   background: gray;
   cursor: grab;
   margin-right: 10px;
-}
+} */

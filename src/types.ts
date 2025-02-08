@@ -14,15 +14,23 @@ export interface TelegramWebApp {
   ready: () => void;
 }
 
+export type UniqueId = string | number;
+
 export type Item = {
-  id: number;
+  id: UniqueId;
   title: string;
   amount?: number;
   unit?: string;
-}
+};
 
 export type Category = {
-  id: number;
+  id: UniqueId;
   title: string;
-  items: Item[];
-}
+  items: UniqueId[];
+};
+
+export type ShopListData = {
+  categories: Record<UniqueId, Category>;
+  items: Record<UniqueId, Item>;
+  categoryOrder: UniqueId[];
+};

@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
-import { useSortable, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import {
+  useSortable,
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import styles from './App.module.css';
 import { Category, Item } from './types';
@@ -40,7 +44,9 @@ export function DraggableCategory({ category, setCategories }: CategoryProps) {
     const newName = e.target.value;
     setCategoryName(newName);
     setCategories((prev) =>
-      prev.map((cat) => (cat.id === category.id ? { ...cat, title: newName } : cat))
+      prev.map((cat) =>
+        cat.id === category.id ? { ...cat, title: newName } : cat
+      )
     );
   };
 
@@ -53,9 +59,17 @@ export function DraggableCategory({ category, setCategories }: CategoryProps) {
         onChange={handleCategoryChange}
       />
       <div ref={setDroppableRef} className={styles.itemsList}>
-        <SortableContext items={category.items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
+        <SortableContext
+          items={category.items.map((item) => item.id)}
+          strategy={verticalListSortingStrategy}
+        >
           {category.items.map((item) => (
-            <DraggableItem key={item.id} item={item} categoryId={category.id} setCategories={setCategories} />
+            <DraggableItem
+              key={item.id}
+              item={item}
+              categoryId={category.id}
+              setCategories={setCategories}
+            />
           ))}
         </SortableContext>
       </div>
@@ -89,7 +103,9 @@ export function DraggableItem({ item, categoryId, setCategories }: ItemProps) {
         cat.id === categoryId
           ? {
               ...cat,
-              items: cat.items.map((i) => (i.id === item.id ? { ...i, title: newName } : i)),
+              items: cat.items.map((i) =>
+                i.id === item.id ? { ...i, title: newName } : i
+              ),
             }
           : cat
       )
