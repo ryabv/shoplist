@@ -1,15 +1,12 @@
-import { FC } from 'react';
+import { ChangeEvent, FC } from 'react';
 import styles from './Category.module.css';
 import { UniqueId } from '../../types';
 import ListItem from '../ListItem';
 import { useDataContext } from '../../contexts/DataContext/hooks';
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { useDroppable } from '@dnd-kit/core';
+
+import { useDraggable, useDroppable } from '../../utils/dnd';
+import { arrayMove } from '../../utils/common/arrayMove';
+import { useDragDropContext } from '../../utils/dnd/DragDropContext';
 
 interface Props {
   id: UniqueId;
@@ -19,18 +16,53 @@ interface Props {
 
 const Category: FC<Props> = ({ id, title, items }) => {
   const { data, onDataChange } = useDataContext();
+    const { activeId, hoverTarget, elementHeight, groupHoverOffsets, setGroupHoverOffsets } = useDragDropContext();
+  
 
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id, data: { type: 'category' } });
+  const handleDrop = (draggedId: UniqueId, targetId: UniqueId) => {
+    if (!draggedId || !targetId) return;
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+    if (
+      data.categoryOrder.includes(draggedId) &&
+      data.categoryOrder.includes(targetId)
+    ) {
+      const oldIndex = data.categoryOrder.indexOf(draggedId);
+      const newIndex = data.categoryOrder.indexOf(targetId);
+      onDataChange({
+        ...data,
+        categoryOrder: arrayMove(data.categoryOrder, oldIndex, newIndex),
+      });
+    }
   };
 
-  const { setNodeRef: setDroppableRef } = useDroppable({ id });
+  const handleDragEnter = () => {
+    console.log(activeId, id)
+    if (activeId !== id) {
+      return;
+    }
 
-  const handleChange = (e) => {
+    const newOffsets = {};
+    const activeIndex = data.categoryOrder.indexOf(activeId);
+    const hoverIndex = data.categoryOrder.indexOf(id);
+    console.log('od', id)
+    data.categoryOrder.forEach((categoryId, index) => {
+      if (
+        (activeIndex > hoverIndex && index >= hoverIndex && index < activeIndex && activeIndex !== hoverIndex) ||
+        (activeIndex < hoverIndex && index > activeIndex && index <= hoverIndex && activeIndex !== hoverIndex)
+      ) {
+        newOffsets[categoryId] = 100;
+      } else {
+        newOffsets[categoryId] = 0;
+      }
+    });
+
+    setGroupHoverOffsets(newOffsets);
+  };
+
+  const droppableRef = useDroppable({ id, onDrop: handleDrop }).ref;
+  const {ref: draggableRef, isDragging } = useDraggable({ id, type: 'category', onDragEnter: handleDragEnter });
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onDataChange({
       ...data,
       categories: {
@@ -40,16 +72,24 @@ const Category: FC<Props> = ({ id, title, items }) => {
     });
   };
 
+  let hoverClass = "";
+  if (hoverTarget === id && activeId) {
+    const activeIndex = data.categoryOrder.indexOf(activeId);
+    const hoverIndex = data.categoryOrder.indexOf(id);
+
+    if (activeIndex > hoverIndex) {
+      hoverClass = "hovering-up";
+    } else if (activeIndex < hoverIndex) {
+      hoverClass = "hovering-down";
+    }
+  }
+  console.log('groupHoverOffsets', groupHoverOffsets);
   return (
-    <div
-      className={styles.category}
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    >
-      <div ref={setDroppableRef} className={styles.itemsList}>
-        <SortableContext items={items} strategy={verticalListSortingStrategy}>
+    <div className={`${styles.category} ${isDragging ? styles.dragging : ""} ${hoverClass ? styles[hoverClass] : ''}`}      
+     style={{ "--hover-offset": `${groupHoverOffsets[id]}px` } as React.CSSProperties}
+>
+      <div ref={droppableRef}>
+        <div ref={draggableRef}>
           <div className={styles.dragHandle} />
           <input
             className={styles.categoryTitle}
@@ -65,7 +105,7 @@ const Category: FC<Props> = ({ id, title, items }) => {
               />
             ))}
           </div>
-        </SortableContext>
+        </div>
       </div>
     </div>
   );

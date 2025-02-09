@@ -1,4 +1,10 @@
 .item {
   font-size: 16px;
   margin-left: 20px;
+  opacity: 1;
+  transition: opacity 0.01s;
+}
+
+.dragging {
+  opacity: 0;
 }
