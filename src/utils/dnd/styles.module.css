@@ -1,0 +1,76 @@
+.droppable {
+  background: #ccc;
+  display: flex;
+  flex-direction: column;
+  transition: 0.2s;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  border: 2px solid transparent;
+}
+
+.block {
+  display: flex;
+  background: cyan;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.handler {
+  background: white;
+  padding: 5px;
+}
+
+.draggable {
+  cursor: grab;
+}
+
+.dragging {
+  opacity: 0.5;
+}
+
+.hovered-top {
+  border-top: 2px solid blue;
+}
+
+.hovered-bottom {
+  border: 2px solid blue;
+}
+
+.line {
+  height: 20px;
+  width: 100%;
+  background: transparent;
+  transition: 0.2s;
+}
+
+.lineHighlight {
+  background: blue;
+}
+
+.itemBlock {
+  position: relative;
+}
+
+.helperBefore {
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  /* background: rgba(0, 0, 255, 0.1); */
+  height: 20%;
+}
+
+.helperAfter {
+  position: absolute;
+  bottom: 0;
+  z-index: 1;
+  width: 100%;
+  /* background: rgba(0, 0, 255, 0.1); */
+  height: 20%;
+}
